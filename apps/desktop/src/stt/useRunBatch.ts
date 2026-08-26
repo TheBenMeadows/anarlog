@@ -7,6 +7,7 @@ import { sonnerToast } from "@anlg/ui/components/ui/toast";
 import { BatchResponseProcessingError } from "./batch-response-processing-error";
 import { useListener } from "./contexts";
 import { persistTranscriptWrite } from "./persist-retry";
+import { ChannelProfile } from "./segment";
 import { useSTTConnection } from "./useSTTConnection";
 
 import { useAuth } from "~/auth";
@@ -50,6 +51,7 @@ type RunOptions = {
   numSpeakers?: number;
   minSpeakers?: number;
   maxSpeakers?: number;
+  importedAudio?: boolean;
   promotion?:
     | { scope: "preserve_existing" }
     | { scope: "whole_session" }
@@ -834,6 +836,12 @@ export const useRunBatch = (sessionId: string) => {
         stagedHints = [];
       };
 
+      // Imported audio has no capture-channel semantics: channel 0 would be
+      // rendered as the user's own mic (DirectMic), collapsing every diarized
+      // speaker into one. Map imports to MixedCapture, like subtitle imports.
+      const mapChannel = (channel: number) =>
+        options?.importedAudio ? ChannelProfile.MixedCapture : channel;
+
       const persist =
         handlePersist ??
         ((words, hints, persistOptions) => {
@@ -852,7 +860,7 @@ export const useRunBatch = (sessionId: string) => {
               text: word.text,
               start_ms: word.start_ms,
               end_ms: word.end_ms,
-              channel: word.channel,
+              channel: mapChannel(word.channel),
               metadata: word.metadata
                 ? JSON.stringify(word.metadata)
                 : undefined,
@@ -881,7 +889,7 @@ export const useRunBatch = (sessionId: string) => {
               type: "provider_speaker_index",
               value: JSON.stringify({
                 provider: hint.data.provider ?? target.provider,
-                channel: hint.data.channel ?? word.channel,
+                channel: mapChannel(hint.data.channel ?? word.channel),
                 speaker_index: hint.data.speaker_index,
               }),
             });
