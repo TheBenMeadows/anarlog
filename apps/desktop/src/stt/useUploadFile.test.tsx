@@ -223,7 +223,7 @@ describe("useUploadFile", () => {
     expect(audioImportMock).not.toHaveBeenCalled();
     expect(runBatchMock).toHaveBeenCalledWith(
       "/vault/sessions/session-1/audio.wav",
-      { promotion: { scope: "whole_session" } },
+      { promotion: { scope: "whole_session" }, importedAudio: true },
     );
     expect(catalogLocalSessionAudioMock).toHaveBeenCalledWith("session-1");
     expect(audioImportDataMock.mock.invocationCallOrder[0]).toBeLessThan(

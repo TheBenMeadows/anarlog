@@ -544,6 +544,62 @@ describe("useRunBatch", () => {
     );
   });
 
+  test("maps imported audio words and hints to the mixed-capture channel", async () => {
+    startTranscriptionMock.mockImplementation(async (_params, options) => {
+      options.handlePersist(
+        [
+          { text: "hello", start_ms: 0, end_ms: 100, channel: 0 },
+          { text: "there", start_ms: 100, end_ms: 200, channel: 0 },
+        ],
+        [
+          {
+            wordIndex: 0,
+            data: {
+              type: "provider_speaker_index",
+              speaker_index: 0,
+              channel: 0,
+            },
+          },
+          {
+            wordIndex: 1,
+            data: {
+              type: "provider_speaker_index",
+              speaker_index: 1,
+              channel: 0,
+            },
+          },
+        ],
+      );
+    });
+
+    const { result } = renderHook(() => useRunBatch("session-1"));
+
+    await act(async () => {
+      await result.current("/tmp/upload.m4a", {
+        promotion: { scope: "whole_session" },
+        importedAudio: true,
+      });
+    });
+
+    expect(saveBatchTranscriptMock).toHaveBeenCalledOnce();
+    expect(saveBatchTranscriptMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        words: [
+          expect.objectContaining({ text: "hello", channel: 2 }),
+          expect.objectContaining({ text: "there", channel: 2 }),
+        ],
+        hints: [
+          expect.objectContaining({
+            value: expect.stringContaining('"channel":2'),
+          }),
+          expect.objectContaining({
+            value: expect.stringContaining('"channel":2'),
+          }),
+        ],
+      }),
+    );
+  });
+
   test("capture repair saves its original interval while deferring audio finalization", async () => {
     startTranscriptionMock.mockImplementation(async (_params, options) => {
       options.handlePersist(
