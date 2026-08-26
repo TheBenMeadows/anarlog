@@ -227,6 +227,7 @@ export function useUploadFile(sessionId: string) {
             try: () =>
               runBatch(importedPath, {
                 promotion: { scope: "whole_session" },
+                importedAudio: true,
               }),
             catch: (error) => error,
           }),
