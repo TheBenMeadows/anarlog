@@ -18,9 +18,11 @@ export function useBillingAccess() {
     throw new Error("useBillingAccess must be used within BillingProvider");
   }
 
-  // mdws patch branch: local-only features (Auto template editing, dictionary,
+  // tbm patch branch: local-only features (Auto template editing, dictionary,
   // automations) are gated on Pro but run entirely on this machine. Force the
-  // Pro flag for them. isPaid is left alone so hosted STT/cloud routing never
-  // pretends to have an entitlement.
-  return { ...context, isPro: true };
+  // Pro flag for them, and isReady too — signed out, the billing claims query
+  // never resolves, which left Save & enable permanently disabled. isPaid is
+  // left alone so hosted STT/cloud routing never pretends to have an
+  // entitlement.
+  return { ...context, isPro: true, isReady: true };
 }
