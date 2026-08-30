@@ -23,7 +23,7 @@ import { withEarlyValidationRetry } from "~/store/zustand/ai-task/shared/validat
 import { assertCanonicalTemplateSections } from "~/templates/codec";
 
 const AI_GENERATION_MAX_RETRIES = 4;
-const SUMMARY_MAX_OUTPUT_TOKENS = 8192;
+const SUMMARY_MAX_OUTPUT_TOKENS = 32768;
 const IMAGE_CONTEXT_NOTE =
   "Attached note images are included as visual context. Use visible text, diagrams, screenshots, and other image content when it materially improves the summary.";
 
