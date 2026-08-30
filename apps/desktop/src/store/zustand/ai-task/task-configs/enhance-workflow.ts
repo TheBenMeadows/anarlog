@@ -23,6 +23,9 @@ import { assertCanonicalTemplateSections } from "~/templates/codec";
 
 const AI_GENERATION_MAX_RETRIES = 4;
 const ANTHROPIC_SUMMARY_MAX_OUTPUT_TOKENS = 64_000;
+// Reasoning models spend thinking tokens from the same output budget as the
+// summary; a provider's default can be too small for a multi-section template.
+const SUMMARY_MAX_OUTPUT_TOKENS = 32_768;
 const IMAGE_CONTEXT_NOTE =
   "Attached note images are included as visual context. Use visible text, diagrams, screenshots, and other image content when it materially improves the summary.";
 
@@ -37,12 +40,11 @@ export const enhanceWorkflow: Pick<
   ],
 };
 
-// Anthropic requires max_tokens and the SDK clamps it to known model limits;
-// other providers default to the model's own maximum when omitted.
-function getSummaryMaxOutputTokens(model: LanguageModel): number | undefined {
+// Anthropic requires max_tokens and the SDK clamps it to known model limits.
+function getSummaryMaxOutputTokens(model: LanguageModel): number {
   return typeof model !== "string" && model.provider.startsWith("anthropic")
     ? ANTHROPIC_SUMMARY_MAX_OUTPUT_TOKENS
-    : undefined;
+    : SUMMARY_MAX_OUTPUT_TOKENS;
 }
 
 async function* executeWorkflow(params: {

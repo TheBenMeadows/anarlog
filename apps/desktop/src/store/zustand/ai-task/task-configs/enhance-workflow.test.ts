@@ -83,7 +83,7 @@ it("passes custom formatting to the renderer without adding layout rules", async
   );
   expect(request.prompt).toContain("Keep the requested structure");
   expect(request.prompt).not.toMatch(/\d to \d sections/);
-  expect(request.maxOutputTokens).toBeUndefined();
+  expect(request.maxOutputTokens).toBe(32_768);
 });
 
 it("adds length guidance to prompts rendered from a template with sections", async () => {
