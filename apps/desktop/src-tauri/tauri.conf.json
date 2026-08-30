@@ -4,7 +4,9 @@
   "mainBinaryName": "anarlog-dev",
   "identifier": "com.hyprnote.dev",
   "build": {
-    "features": ["direct-distribution"],
+    "features": [
+      "direct-distribution"
+    ],
     "beforeDevCommand": "pnpm -F desktop dev",
     "devUrl": "http://localhost:1422",
     "beforeBuildCommand": "pnpm -F desktop build",
@@ -114,5 +116,6 @@
       "dialog": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEFFNUI0ODhBNzhBMTEwQQpSV1FLRVlxbmlMVGxDdXJvaUVTTnlwNEF5R1Bodzh3WThMZUpNMVk4K0hhbnV4TDZ1TFFucC9Gbwo="
     }
-  }
+  },
+  "version": "1.4.13-tbm.4"
 }
