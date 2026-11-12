@@ -3,7 +3,7 @@ source: apps/cli/src/mcp.rs
 expression: "canonicalize_json(serde_json::json!({\n    \"protocol_version\": info.protocol_version, \"instructions\":\n    info.instructions, \"tools\": tools, \"resource_templates\": templates,\n}))"
 ---
 {
-  "instructions": "Local access to Anarlog meeting data. Start with list_meetings to resolve a meeting_id; to scope work to a project or client, call list_folders and pass a returned path as folder_path. Then call get_meeting for notes, summaries, participants, and action items. Request transcript pages with get_meeting_transcript and continue with pagination.next_offset; each page is capped at 500 words. Use get_recurring_meeting_history for series context. Use export_meeting only when the task needs the complete record including transcripts. To persist an edit, call propose_summary_edit or propose_memo_edit; the result stays pending until a human applies it in the desktop app. List or inspect staged work with list_proposals and get_proposal. decline_proposal discards a pending proposal without changing the meeting. Never invent meeting titles, dates, or ids. If list_meetings returns no meetings, say so. Never access SQLite directly, or claim a proposal was applied. Documentation: https://docs.anarlog.so",
+  "instructions": "Local access to Anarlog meeting data. Start with list_meetings to resolve a meeting_id; to scope work to a project or client, call list_folders and pass a returned path as folder_path. Use search_meetings to find meetings by what was said or written. Then call get_meeting for notes, summaries, participants, and action items. Request transcript pages with get_meeting_transcript and continue with pagination.next_offset; each page is capped at 500 words. Use get_recurring_meeting_history for series context. Use export_meeting only when the task needs the complete record including transcripts. To persist an edit, call propose_summary_edit or propose_memo_edit; the result stays pending until a human applies it in the desktop app. List or inspect staged work with list_proposals and get_proposal. decline_proposal discards a pending proposal without changing the meeting. Never invent meeting titles, dates, or ids. If list_meetings returns no meetings, say so. Never access SQLite directly, or claim a proposal was applied. Documentation: https://docs.anarlog.so",
   "protocol_version": "2026-07-28",
   "resource_templates": [
     {
@@ -780,6 +780,31 @@ expression: "canonicalize_json(serde_json::json!({\n    \"protocol_version\": in
               "returned"
             ],
             "type": "object"
+          },
+          "TranscriptSegment": {
+            "properties": {
+              "speaker": {
+                "description": "Null for words the stored speaker data does not cover.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "start_ms": {
+                "format": "int64",
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "text"
+            ],
+            "type": "object"
           }
         },
         "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -789,6 +814,13 @@ expression: "canonicalize_json(serde_json::json!({\n    \"protocol_version\": in
           },
           "pagination": {
             "$ref": "#/$defs/Pagination"
+          },
+          "segments": {
+            "description": "The page's words grouped by speaker, labeled as the desktop transcript\nview labels them. Empty when the transcript has no speaker data.",
+            "items": {
+              "$ref": "#/$defs/TranscriptSegment"
+            },
+            "type": "array"
           },
           "text": {
             "type": "string"
@@ -1817,6 +1849,205 @@ expression: "canonicalize_json(serde_json::json!({\n    \"protocol_version\": in
         "type": "object"
       },
       "title": "Propose summary edit"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Find Anarlog meetings by a word or phrase said in the transcript or written in the title, note, or summaries. Returns matching meetings newest first with match counts and snippets; transcript snippets carry the speaker, the time, and a word_offset to pass to get_meeting_transcript as offset. Use folder_path to scope to a folder and its subfolders, then pass next_offset as offset to continue.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "folder_path": {
+            "default": null,
+            "description": "Folder path from list_folders, such as Projects/Launch; includes meetings in its subfolders",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "description": "Maximum meetings; defaults to 20 and is capped at 200",
+            "format": "uint32",
+            "maximum": 200,
+            "minimum": 1,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "offset": {
+            "description": "Number of matching meetings to skip; defaults to 0",
+            "format": "uint32",
+            "minimum": 0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "query": {
+            "description": "Case-insensitive word or phrase to find in transcripts, titles, notes, and summaries",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      },
+      "name": "search_meetings",
+      "outputSchema": {
+        "$defs": {
+          "MeetingSearchHit": {
+            "properties": {
+              "folder_path": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "match_count": {
+                "format": "uint",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "matched_fields": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "meeting_id": {
+                "type": "string"
+              },
+              "snippets": {
+                "items": {
+                  "$ref": "#/$defs/MeetingSearchSnippet"
+                },
+                "type": "array"
+              },
+              "started_at": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "meeting_id",
+              "title",
+              "started_at",
+              "match_count",
+              "matched_fields",
+              "snippets"
+            ],
+            "type": "object"
+          },
+          "MeetingSearchSnippet": {
+            "properties": {
+              "field": {
+                "description": "`transcript`, `title`, `note`, or `summary`.",
+                "type": "string"
+              },
+              "speaker": {
+                "description": "Speaker of the first matched word; null outside transcripts or when the\ntranscript has no speaker data.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "start_ms": {
+                "description": "Time of the first matched word from the start of the recording.",
+                "format": "int64",
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "text": {
+                "type": "string"
+              },
+              "word_offset": {
+                "description": "Transcript word offset where this snippet starts; pass it to\nget_meeting_transcript as `offset`.",
+                "format": "uint32",
+                "minimum": 0,
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "field",
+              "text"
+            ],
+            "type": "object"
+          },
+          "Pagination": {
+            "properties": {
+              "limit": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "next_offset": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "offset": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "returned": {
+                "format": "uint",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "total": {
+                "format": "uint",
+                "minimum": 0,
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "offset",
+              "limit",
+              "returned"
+            ],
+            "type": "object"
+          }
+        },
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "properties": {
+          "hits": {
+            "items": {
+              "$ref": "#/$defs/MeetingSearchHit"
+            },
+            "type": "array"
+          },
+          "pagination": {
+            "$ref": "#/$defs/Pagination"
+          }
+        },
+        "required": [
+          "hits",
+          "pagination"
+        ],
+        "title": "MeetingSearchPage",
+        "type": "object"
+      },
+      "title": "Search meetings"
     }
   ]
 }
