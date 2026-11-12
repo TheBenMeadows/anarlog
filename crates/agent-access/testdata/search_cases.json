@@ -1,0 +1,733 @@
+{
+  "_comment": "Search cases for search_meetings. Written before the implementation; the runner in src/search.rs reads this file and must not be changed to fit a failing case. In an expected snippet, only the keys present are compared; `contains` is a substring of the snippet text.",
+  "seed": {
+    "humans": [
+      {
+        "id": "self-1",
+        "name": "Me"
+      },
+      {
+        "id": "human-1",
+        "name": "Alice"
+      }
+    ],
+    "meetings": [
+      {
+        "id": "m1",
+        "title": "Roof planning",
+        "started_at": "2026-07-13",
+        "folder_path": "Clients/Acme",
+        "owner_user_id": "self-1",
+        "participants": [
+          {
+            "human_id": "human-1",
+            "display_name": "Alice"
+          }
+        ],
+        "note": "Check the scupper drains",
+        "transcripts": [
+          {
+            "id": "t1",
+            "started_at_ms": 0,
+            "words": [
+              {
+                "id": "t1-w0",
+                "text": "Hello",
+                "start_ms": 0,
+                "end_ms": 400,
+                "channel": 0
+              },
+              {
+                "id": "t1-w1",
+                "text": "there",
+                "start_ms": 500,
+                "end_ms": 900,
+                "channel": 0
+              },
+              {
+                "id": "t1-w2",
+                "text": "The",
+                "start_ms": 1000,
+                "end_ms": 1400,
+                "channel": 1
+              },
+              {
+                "id": "t1-w3",
+                "text": "parapet",
+                "start_ms": 1500,
+                "end_ms": 1900,
+                "channel": 1
+              },
+              {
+                "id": "t1-w4",
+                "text": "coping,",
+                "start_ms": 2000,
+                "end_ms": 2400,
+                "channel": 1
+              },
+              {
+                "id": "t1-w5",
+                "text": "leaks.",
+                "start_ms": 2500,
+                "end_ms": 2900,
+                "channel": 1
+              }
+            ],
+            "hints": [
+              {
+                "type": "user_speaker_assignment",
+                "word_id": "t1-w2",
+                "value": {
+                  "human_id": "human-1",
+                  "scope": "speaker",
+                  "channel": 1,
+                  "speaker_index": null
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "m2",
+        "title": "Warranty call",
+        "started_at": "2026-08-01",
+        "folder_path": "",
+        "owner_user_id": "self-1",
+        "summary": "Discussed parapet coping replacement.",
+        "transcripts": [
+          {
+            "id": "t2",
+            "started_at_ms": 0,
+            "words": [
+              {
+                "id": "t2-w0",
+                "text": "Warranty",
+                "start_ms": 0,
+                "end_ms": 400,
+                "channel": 0
+              },
+              {
+                "id": "t2-w1",
+                "text": "covers",
+                "start_ms": 500,
+                "end_ms": 900,
+                "channel": 0
+              },
+              {
+                "id": "t2-w2",
+                "text": "the",
+                "start_ms": 1000,
+                "end_ms": 1400,
+                "channel": 0
+              },
+              {
+                "id": "t2-w3",
+                "text": "PARAPET",
+                "start_ms": 1500,
+                "end_ms": 1900,
+                "channel": 0
+              },
+              {
+                "id": "t2-w4",
+                "text": "cap",
+                "start_ms": 2000,
+                "end_ms": 2400,
+                "channel": 0
+              }
+            ],
+            "hints": []
+          }
+        ]
+      },
+      {
+        "id": "m3",
+        "title": "Parapet walk",
+        "started_at": "2026-06-01",
+        "folder_path": "Clients/Beta",
+        "owner_user_id": "self-1",
+        "transcripts": []
+      },
+      {
+        "id": "m4",
+        "title": "Long standup",
+        "started_at": "2026-07-01",
+        "folder_path": "",
+        "owner_user_id": "self-1",
+        "transcripts": [
+          {
+            "id": "t4",
+            "started_at_ms": 0,
+            "words": [
+              {
+                "id": "t4-w0",
+                "text": "filler0",
+                "start_ms": 0,
+                "end_ms": 400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w1",
+                "text": "filler1",
+                "start_ms": 500,
+                "end_ms": 900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w2",
+                "text": "filler2",
+                "start_ms": 1000,
+                "end_ms": 1400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w3",
+                "text": "filler3",
+                "start_ms": 1500,
+                "end_ms": 1900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w4",
+                "text": "filler4",
+                "start_ms": 2000,
+                "end_ms": 2400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w5",
+                "text": "filler5",
+                "start_ms": 2500,
+                "end_ms": 2900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w6",
+                "text": "filler6",
+                "start_ms": 3000,
+                "end_ms": 3400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w7",
+                "text": "filler7",
+                "start_ms": 3500,
+                "end_ms": 3900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w8",
+                "text": "filler8",
+                "start_ms": 4000,
+                "end_ms": 4400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w9",
+                "text": "filler9",
+                "start_ms": 4500,
+                "end_ms": 4900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w10",
+                "text": "filler10",
+                "start_ms": 5000,
+                "end_ms": 5400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w11",
+                "text": "filler11",
+                "start_ms": 5500,
+                "end_ms": 5900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w12",
+                "text": "filler12",
+                "start_ms": 6000,
+                "end_ms": 6400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w13",
+                "text": "filler13",
+                "start_ms": 6500,
+                "end_ms": 6900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w14",
+                "text": "filler14",
+                "start_ms": 7000,
+                "end_ms": 7400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w15",
+                "text": "filler15",
+                "start_ms": 7500,
+                "end_ms": 7900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w16",
+                "text": "filler16",
+                "start_ms": 8000,
+                "end_ms": 8400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w17",
+                "text": "filler17",
+                "start_ms": 8500,
+                "end_ms": 8900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w18",
+                "text": "filler18",
+                "start_ms": 9000,
+                "end_ms": 9400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w19",
+                "text": "filler19",
+                "start_ms": 9500,
+                "end_ms": 9900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w20",
+                "text": "filler20",
+                "start_ms": 10000,
+                "end_ms": 10400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w21",
+                "text": "filler21",
+                "start_ms": 10500,
+                "end_ms": 10900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w22",
+                "text": "filler22",
+                "start_ms": 11000,
+                "end_ms": 11400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w23",
+                "text": "filler23",
+                "start_ms": 11500,
+                "end_ms": 11900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w24",
+                "text": "filler24",
+                "start_ms": 12000,
+                "end_ms": 12400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w25",
+                "text": "needle",
+                "start_ms": 12500,
+                "end_ms": 12900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w26",
+                "text": "filler26",
+                "start_ms": 13000,
+                "end_ms": 13400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w27",
+                "text": "filler27",
+                "start_ms": 13500,
+                "end_ms": 13900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w28",
+                "text": "filler28",
+                "start_ms": 14000,
+                "end_ms": 14400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w29",
+                "text": "filler29",
+                "start_ms": 14500,
+                "end_ms": 14900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w30",
+                "text": "filler30",
+                "start_ms": 15000,
+                "end_ms": 15400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w31",
+                "text": "filler31",
+                "start_ms": 15500,
+                "end_ms": 15900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w32",
+                "text": "filler32",
+                "start_ms": 16000,
+                "end_ms": 16400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w33",
+                "text": "filler33",
+                "start_ms": 16500,
+                "end_ms": 16900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w34",
+                "text": "filler34",
+                "start_ms": 17000,
+                "end_ms": 17400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w35",
+                "text": "filler35",
+                "start_ms": 17500,
+                "end_ms": 17900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w36",
+                "text": "filler36",
+                "start_ms": 18000,
+                "end_ms": 18400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w37",
+                "text": "filler37",
+                "start_ms": 18500,
+                "end_ms": 18900,
+                "channel": 0
+              },
+              {
+                "id": "t4-w38",
+                "text": "filler38",
+                "start_ms": 19000,
+                "end_ms": 19400,
+                "channel": 0
+              },
+              {
+                "id": "t4-w39",
+                "text": "filler39",
+                "start_ms": 19500,
+                "end_ms": 19900,
+                "channel": 0
+              }
+            ],
+            "hints": []
+          }
+        ]
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "single word matches transcript, summary and title, newest meeting first",
+      "input": {
+        "query": "parapet"
+      },
+      "expect": {
+        "total": 3,
+        "next_offset": null,
+        "hits": [
+          {
+            "meeting_id": "m2",
+            "match_count": 2,
+            "matched_fields": [
+              "transcript",
+              "summary"
+            ],
+            "snippets": [
+              {
+                "field": "transcript",
+                "start_ms": 1500,
+                "word_offset": 0,
+                "contains": "PARAPET cap"
+              },
+              {
+                "field": "summary",
+                "speaker": null,
+                "start_ms": null,
+                "word_offset": null,
+                "contains": "parapet coping replacement"
+              }
+            ]
+          },
+          {
+            "meeting_id": "m1",
+            "match_count": 1,
+            "matched_fields": [
+              "transcript"
+            ],
+            "snippets": [
+              {
+                "field": "transcript",
+                "speaker": "Alice",
+                "start_ms": 1500,
+                "word_offset": 0,
+                "contains": "parapet coping, leaks."
+              }
+            ]
+          },
+          {
+            "meeting_id": "m3",
+            "match_count": 1,
+            "matched_fields": [
+              "title"
+            ],
+            "snippets": [
+              {
+                "field": "title",
+                "text": "Parapet walk"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "phrase matches consecutive transcript words and ignores trailing punctuation",
+      "input": {
+        "query": "parapet coping"
+      },
+      "expect": {
+        "total": 2,
+        "hits": [
+          {
+            "meeting_id": "m2",
+            "match_count": 1,
+            "matched_fields": [
+              "summary"
+            ]
+          },
+          {
+            "meeting_id": "m1",
+            "match_count": 1,
+            "matched_fields": [
+              "transcript"
+            ],
+            "snippets": [
+              {
+                "field": "transcript",
+                "speaker": "Alice",
+                "start_ms": 1500
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "match is case-insensitive in both directions",
+      "input": {
+        "query": "parapet CAP"
+      },
+      "expect": {
+        "total": 1,
+        "hits": [
+          {
+            "meeting_id": "m2",
+            "match_count": 1,
+            "matched_fields": [
+              "transcript"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "a query fragment matches inside a word",
+      "input": {
+        "query": "leak"
+      },
+      "expect": {
+        "total": 1,
+        "hits": [
+          {
+            "meeting_id": "m1",
+            "match_count": 1,
+            "matched_fields": [
+              "transcript"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "phrase words must be adjacent and in order",
+      "input": {
+        "query": "coping parapet"
+      },
+      "expect": {
+        "total": 0,
+        "hits": []
+      }
+    },
+    {
+      "name": "phrase crossing a speaker change is labeled with the first matched word's speaker",
+      "input": {
+        "query": "there the"
+      },
+      "expect": {
+        "total": 1,
+        "hits": [
+          {
+            "meeting_id": "m1",
+            "match_count": 1,
+            "matched_fields": [
+              "transcript"
+            ],
+            "snippets": [
+              {
+                "field": "transcript",
+                "speaker": "Speaker 1",
+                "start_ms": 500
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "note text is searched",
+      "input": {
+        "query": "scupper"
+      },
+      "expect": {
+        "total": 1,
+        "hits": [
+          {
+            "meeting_id": "m1",
+            "match_count": 1,
+            "matched_fields": [
+              "note"
+            ],
+            "snippets": [
+              {
+                "field": "note",
+                "speaker": null,
+                "contains": "scupper drains"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "folder_path scopes to a folder and its subfolders",
+      "input": {
+        "query": "parapet",
+        "folder_path": "Clients"
+      },
+      "expect": {
+        "total": 2,
+        "hits": [
+          {
+            "meeting_id": "m1"
+          },
+          {
+            "meeting_id": "m3"
+          }
+        ]
+      }
+    },
+    {
+      "name": "limit and offset page over hits and report the next offset",
+      "input": {
+        "query": "parapet",
+        "limit": 1,
+        "offset": 1
+      },
+      "expect": {
+        "total": 3,
+        "next_offset": 2,
+        "hits": [
+          {
+            "meeting_id": "m1"
+          }
+        ]
+      }
+    },
+    {
+      "name": "snippet is a window around the match and word_offset is the window start",
+      "input": {
+        "query": "needle"
+      },
+      "expect": {
+        "total": 1,
+        "hits": [
+          {
+            "meeting_id": "m4",
+            "match_count": 1,
+            "matched_fields": [
+              "transcript"
+            ],
+            "snippets": [
+              {
+                "field": "transcript",
+                "start_ms": 12500,
+                "word_offset": 15,
+                "text": "filler15 filler16 filler17 filler18 filler19 filler20 filler21 filler22 filler23 filler24 needle filler26 filler27 filler28 filler29 filler30 filler31 filler32 filler33 filler34 filler35 filler36 filler37 filler38 filler39"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "no match returns an empty page",
+      "input": {
+        "query": "gutter"
+      },
+      "expect": {
+        "total": 0,
+        "next_offset": null,
+        "hits": []
+      }
+    },
+    {
+      "name": "blank query is rejected",
+      "input": {
+        "query": "   "
+      },
+      "expect": {
+        "error": true
+      }
+    },
+    {
+      "name": "punctuation-only query is rejected",
+      "input": {
+        "query": "..."
+      },
+      "expect": {
+        "error": true
+      }
+    }
+  ]
+}
