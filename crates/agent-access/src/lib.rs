@@ -3,6 +3,7 @@
 mod proposals;
 mod recording_import;
 pub use recording_import::*;
+mod search;
 mod transcript_render;
 
 use schemars::JsonSchema;
@@ -15,6 +16,10 @@ pub use proposals::{
     CreateProposalInput, DeclineProposalInput, GetProposalInput, ListProposalsInput, Proposal,
     ProposalPage, create_proposal, decline_proposal, get_proposal, list_proposals,
     proposal_unified_diff,
+};
+pub use search::{
+    MAX_SEARCH_SNIPPETS, MeetingSearchHit, MeetingSearchPage, MeetingSearchSnippet,
+    SearchMeetingsInput, TranscriptSegment, search_meetings,
 };
 
 pub const DEFAULT_LIST_LIMIT: u32 = 20;
@@ -181,6 +186,10 @@ pub struct TranscriptPage {
     pub meeting_id: String,
     pub text: String,
     pub words: Vec<Value>,
+    /// The page's words grouped by speaker, labeled as the desktop transcript
+    /// view labels them. Empty when the transcript has no speaker data.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub segments: Vec<TranscriptSegment>,
     pub pagination: Pagination,
 }
 
@@ -448,27 +457,18 @@ pub async fn get_meeting_transcript(
     pool: &SqlitePool,
     input: GetMeetingTranscriptInput,
 ) -> Result<TranscriptPage> {
-    let exists = anlg_db_app::get_session(pool, &input.meeting_id)
-        .await
-        .map_err(|source| Error::Database {
-            action: "load meeting",
-            source,
-        })?
-        .is_some();
-    if !exists {
-        return Err(Error::NotFound(format!("meeting '{}'", input.meeting_id)));
-    }
-
-    let transcripts = load_transcripts(pool, &input.meeting_id).await?;
-    Ok(paginate_transcripts(
+    let export = get_meeting_export(pool, input.meeting_id.clone()).await?;
+    let mut page = paginate_transcripts(
         &input.meeting_id,
-        &transcripts,
+        &export.transcripts,
         input.offset.unwrap_or(0),
         input
             .limit
             .unwrap_or(DEFAULT_TRANSCRIPT_LIMIT)
             .clamp(1, MAX_TRANSCRIPT_LIMIT),
-    ))
+    );
+    page.segments = search::page_segments(&page.words, &export);
+    Ok(page)
 }
 
 pub async fn get_recurring_meeting_history(
@@ -891,12 +891,6 @@ impl From<anlg_db_app::SessionTranscriptRow> for Transcript {
     }
 }
 
-async fn load_transcripts(pool: &SqlitePool, meeting_id: &str) -> Result<Vec<Transcript>> {
-    load_transcript_rows(pool, meeting_id)
-        .await
-        .map(|rows| rows.into_iter().map(Transcript::from).collect())
-}
-
 async fn load_transcript_rows(
     pool: &SqlitePool,
     meeting_id: &str,
@@ -950,6 +944,7 @@ pub fn paginate_transcripts(
         text,
         pagination: pagination(offset, limit, words.len(), Some(total_words), has_more),
         words,
+        segments: Vec::new(),
     }
 }
 

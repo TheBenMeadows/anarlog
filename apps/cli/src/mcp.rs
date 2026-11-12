@@ -116,6 +116,27 @@ impl AnarlogMcpServer {
     }
 
     #[tool(
+        title = "Search meetings",
+        description = "Find Anarlog meetings by a word or phrase said in the transcript or written in the title, note, or summaries. Returns matching meetings newest first with match counts and snippets; transcript snippets carry the speaker, the time, and a word_offset to pass to get_meeting_transcript as offset. Use folder_path to scope to a folder and its subfolders, then pass next_offset as offset to continue.",
+        output_schema = rmcp::handler::server::tool::schema_for_type::<access::MeetingSearchPage>(),
+        annotations(
+            read_only_hint = true,
+            destructive_hint = false,
+            idempotent_hint = true,
+            open_world_hint = false
+        )
+    )]
+    async fn search_meetings(
+        &self,
+        Parameters(input): Parameters<access::SearchMeetingsInput>,
+    ) -> std::result::Result<CallToolResult, McpError> {
+        let page = access::search_meetings(self.db.pool(), input)
+            .await
+            .map_err(command_error)?;
+        structured(&page)
+    }
+
+    #[tool(
         title = "Get meeting",
         description = "Get one Anarlog meeting with its canonical note, summaries, participants, and action items. Use get_meeting_transcript separately for transcript words.",
         output_schema = rmcp::handler::server::tool::schema_for_type::<access::LocalMeeting>(),
@@ -353,7 +374,7 @@ impl ServerHandler for AnarlogMcpServer {
         .with_protocol_version(ProtocolVersion::V_2026_07_28)
         .with_server_info(Implementation::new("anarlog", crate::VERSION))
         .with_instructions(
-            "Local access to Anarlog meeting data. Start with list_meetings to resolve a meeting_id; to scope work to a project or client, call list_folders and pass a returned path as folder_path. Then call get_meeting for notes, summaries, participants, and action items. Request transcript pages with get_meeting_transcript and continue with pagination.next_offset; each page is capped at 500 words. Use get_recurring_meeting_history for series context. Use export_meeting only when the task needs the complete record including transcripts. To persist an edit, call propose_summary_edit or propose_memo_edit; the result stays pending until a human applies it in the desktop app. List or inspect staged work with list_proposals and get_proposal. decline_proposal discards a pending proposal without changing the meeting. Never invent meeting titles, dates, or ids. If list_meetings returns no meetings, say so. Never access SQLite directly, or claim a proposal was applied. Documentation: https://docs.anarlog.so",
+            "Local access to Anarlog meeting data. Start with list_meetings to resolve a meeting_id; to scope work to a project or client, call list_folders and pass a returned path as folder_path. Use search_meetings to find meetings by what was said or written. Then call get_meeting for notes, summaries, participants, and action items. Request transcript pages with get_meeting_transcript and continue with pagination.next_offset; each page is capped at 500 words. Use get_recurring_meeting_history for series context. Use export_meeting only when the task needs the complete record including transcripts. To persist an edit, call propose_summary_edit or propose_memo_edit; the result stays pending until a human applies it in the desktop app. List or inspect staged work with list_proposals and get_proposal. decline_proposal discards a pending proposal without changing the meeting. Never invent meeting titles, dates, or ids. If list_meetings returns no meetings, say so. Never access SQLite directly, or claim a proposal was applied. Documentation: https://docs.anarlog.so",
         )
     }
 
@@ -725,6 +746,7 @@ mod tests {
                 "list_proposals",
                 "propose_memo_edit",
                 "propose_summary_edit",
+                "search_meetings",
             ]
         );
         let mcp_docs = include_str!("../../../docs/reference/mcp.mdx");
@@ -865,7 +887,7 @@ mod tests {
         let tools = client.receive().await.unwrap();
         let tools = serde_json::to_value(tools).unwrap();
         assert_eq!(tools["result"]["resultType"], "complete");
-        assert_eq!(tools["result"]["tools"].as_array().unwrap().len(), 13);
+        assert_eq!(tools["result"]["tools"].as_array().unwrap().len(), 14);
 
         drop(client);
         server_task.await.unwrap().cancel().await.unwrap();

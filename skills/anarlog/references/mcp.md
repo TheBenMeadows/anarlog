@@ -6,6 +6,7 @@ Cloud MCP is read-only. Local MCP adds `list_folders` and proposal tools, which 
 | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `list_meetings`                 | Find recent meetings by title, ID fragment, or recurring series. An empty list means none matched; do not invent meetings. |
 | `list_folders`                  | List local meeting folder paths. Pass a returned `path` as `list_meetings` `folder_path` to include its subfolders.        |
+| `search_meetings`               | Find meetings by a word or phrase said or written. Transcript snippets give the speaker and a transcript `word_offset`.    |
 | `get_meeting`                   | Read metadata, canonical note, summaries, participants, and action items.                                                  |
 | `get_meeting_transcript`        | Read a transcript page. Start with `limit: 200`; continue from `pagination.next_offset` only as needed.                    |
 | `get_recurring_meeting_history` | Find meetings from the same recurring series as a known meeting.                                                           |

@@ -29,6 +29,17 @@ Each meeting includes `folder_path`, which is `null` when the meeting is not in 
 
 Returns `folders` sorted by path, plus `pagination`. Each folder contains `path`, `name`, and `parent_path` (`null` for top-level folders). The list includes empty folders and parent folders. Pass a returned `path` as `list_meetings` `folder_path`.
 
+### `search_meetings`
+
+| Parameter | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `query` | string | required | Case-insensitive word or phrase. Matches transcripts, titles, notes, and summaries; punctuation at word edges is ignored. |
+| `folder_path` | string | — | Folder path from `list_folders`. Includes meetings in its subfolders. |
+| `limit` | integer | `20` | Clamped to `1..200`. Counts matching meetings. |
+| `offset` | integer | `0` | Number of matching meetings to skip. |
+
+Returns `hits`, newest meeting first, plus `pagination` with the `total` number of matching meetings. Each hit contains `meeting_id`, `title`, `started_at`, `folder_path`, `match_count`, `matched_fields`, and up to three `snippets`. A snippet has `field` (`transcript`, `title`, `note`, or `summary`) and `text`. Transcript snippets also carry `speaker`, `start_ms` for the first matched word, and `word_offset`, which is the `get_meeting_transcript` `offset` where the snippet starts. The search reads every meeting in scope on each call.
+
 ### `get_meeting`
 
 Accepts required string `meeting_id`. Returns meeting metadata, including `folder_path`, the canonical memo, summaries, participants, and action items. Transcript words are intentionally separate.
@@ -41,7 +52,7 @@ Accepts required string `meeting_id`. Returns meeting metadata, including `folde
 | `offset` | integer | `0` | Word offset. |
 | `limit` | integer | `200` | Clamped to `1..500`. |
 
-The result includes `meeting_id`, `text`, `words`, and a `pagination` object. Pagination contains `offset`, `limit`, `returned`, `total`, and `next_offset`. A missing `pagination.next_offset` means the page reached the end.
+The result includes `meeting_id`, `text`, `words`, and a `pagination` object. When the transcript has speaker data, `segments` groups the page's words by speaker; each segment has `speaker`, `text`, and `start_ms`, labeled as the desktop transcript view labels them. Pagination contains `offset`, `limit`, `returned`, `total`, and `next_offset`. A missing `pagination.next_offset` means the page reached the end.
 
 ### `get_recurring_meeting_history`
 

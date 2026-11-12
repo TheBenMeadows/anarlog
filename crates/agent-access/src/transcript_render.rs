@@ -55,6 +55,29 @@ pub fn render_transcripts_markdown(export: &MeetingExport) -> String {
         .join("\n\n")
 }
 
+/// Speaker label for each stored word id, from the same renderer as the
+/// markdown export. Empty when no transcript has complete word-level data.
+pub(crate) fn speaker_labels_by_word_id(export: &MeetingExport) -> HashMap<String, String> {
+    let renderable = export
+        .transcripts
+        .iter()
+        .filter_map(normalize_transcript)
+        .collect::<Vec<_>>();
+    if renderable.is_empty() {
+        return HashMap::new();
+    }
+    render_transcript_segments(build_render_request(export, renderable))
+        .into_iter()
+        .flat_map(|segment| {
+            let label = segment.speaker_label;
+            segment
+                .words
+                .into_iter()
+                .filter_map(move |word| word.id.map(|id| (id, label.clone())))
+        })
+        .collect()
+}
+
 pub(crate) fn render_flat_transcripts(transcripts: &[Transcript]) -> String {
     transcripts
         .iter()
